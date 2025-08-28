@@ -1,0 +1,60 @@
+---
+# Роль ssh_audit: читает эффективные параметры sshd и сверяет с эталоном
+
+- name: Ensure log directory exists
+  ansible.builtin.file:
+    path: "{{ ssh_audit_log_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Get effective sshd config via sshd -T
+  ansible.builtin.command: >-
+    sshd -T -f {{ ssh_audit_sshd_config_path }}
+  register: sshd_t_output
+  changed_when: false
+
+- name: Extract target parameters from sshd -T output
+  ansible.builtin.set_fact:
+    ssh_audit_values: "{{ ssh_audit_values | default({}) | combine({ item.param: ((sshd_t_output.stdout_lines | select('match', '^' ~ item.key ~ '\\s+') | list | first | default('')) | regex_replace('^.*\\s+', '')) }) }}"
+  loop:
+    - { param: 'PermitRootLogin', key: 'permitrootlogin' }
+    - { param: 'PasswordAuthentication', key: 'passwordauthentication' }
+    - { param: 'MaxAuthTries', key: 'maxauthtries' }
+    - { param: 'ChallengeResponseAuthentication', key: 'challengeresponseauthentication' }
+    - { param: 'X11Forwarding', key: 'x11forwarding' }
+
+- name: Compute status
+  ansible.builtin.set_fact:
+    ssh_audit_status: >-
+      {{ 'compliant' if (
+           ssh_audit_expected.PermitRootLogin == ssh_audit_values.PermitRootLogin and
+           ssh_audit_expected.PasswordAuthentication == ssh_audit_values.PasswordAuthentication and
+           ssh_audit_expected.MaxAuthTries == ssh_audit_values.MaxAuthTries and
+           ssh_audit_expected.ChallengeResponseAuthentication == ssh_audit_values.ChallengeResponseAuthentication and
+           ssh_audit_expected.X11Forwarding == ssh_audit_values.X11Forwarding
+         ) else 'non-compliant' }}
+
+- name: Compose one-line JSON log
+  ansible.builtin.set_fact:
+    ssh_audit_json: >-
+      {{ {
+          'timestamp': (lookup('pipe','date -u +%Y-%m-%dT%H:%M:%SZ')),
+          'host': 'localhost',
+          'ansible_version': ansible_version.full,
+          'ansible_user': ansible_user_id | default('unknown'),
+          'message': ({'status': ssh_audit_status} if ssh_audit_status == 'compliant' else ({
+            'status': ssh_audit_status,
+            'PermitRootLogin': ssh_audit_values.PermitRootLogin,
+            'PasswordAuthentication': ssh_audit_values.PasswordAuthentication,
+            'MaxAuthTries': ssh_audit_values.MaxAuthTries,
+            'ChallengeResponseAuthentication': ssh_audit_values.ChallengeResponseAuthentication,
+            'X11Forwarding': ssh_audit_values.X11Forwarding
+          }))
+        } | to_json }}
+
+- name: Write JSON log (single line)
+  ansible.builtin.copy:
+    content: "{{ ssh_audit_json }}\n"
+    dest: "{{ ssh_audit_log_path }}"
+    mode: '0644'
+

@@ -1,0 +1,7 @@
+# Пример sshd_config для локального теста роли
+PermitRootLogin no
+PasswordAuthentication no
+MaxAuthTries 6
+ChallengeResponseAuthentication no
+X11Forwarding no
+

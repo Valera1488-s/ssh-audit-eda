@@ -1,0 +1,17 @@
+---
+# Локальный плейбук для запуска роли ssh_audit внутри контейнера
+- name: Run ssh_audit locally
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ssh_audit_sshd_config_path: "/example/sshd_config"  # путь к тестовому файлу
+    ssh_audit_expected:
+      PermitRootLogin: "no"
+      PasswordAuthentication: "no"
+      MaxAuthTries: "6"
+      ChallengeResponseAuthentication: "no"
+      X11Forwarding: "no"
+    ssh_audit_log_path: "/var/log/ansible-ssh-audit.log"
+  roles:
+    - ssh_audit
+
