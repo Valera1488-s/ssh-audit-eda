@@ -14,4 +14,3 @@
     ssh_audit_log_path: "/var/log/ansible-ssh-audit.log"
   roles:
     - role: ssh_audit
-
