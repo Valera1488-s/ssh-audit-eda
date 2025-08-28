@@ -1,8 +1,16 @@
+---
 extends: default
 
 rules:
-  # В Ansible-файлах часто используется Jinja2 с фигурными скобками — отключаем правило
-  braces: disable
+  # Требования ansible-lint к yamllint
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: disable
+  braces:
+    max-spaces-inside: 1
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
 
   # Ограничим длину строки более мягко, чтобы не ломать jinja-выражения
   line-length:
@@ -16,5 +24,3 @@ rules:
   # Требуем '---' в начале, где уместно
   document-start:
     present: true
-
-

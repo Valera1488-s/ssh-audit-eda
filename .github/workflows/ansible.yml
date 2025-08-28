@@ -1,5 +1,5 @@
 name: ansible-ssh-audit-ci
-"on":
+on:
   push:
     branches:
       - "**"
