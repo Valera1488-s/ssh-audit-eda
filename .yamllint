@@ -1,0 +1,20 @@
+extends: default
+
+rules:
+  # В Ansible-файлах часто используется Jinja2 с фигурными скобками — отключаем правило
+  braces: disable
+
+  # Ограничим длину строки более мягко, чтобы не ломать jinja-выражения
+  line-length:
+    max: 140
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  # YAML 1.1: ключи вроде 'on' считаются truthy — не ругаемся
+  truthy: disable
+
+  # Требуем '---' в начале, где уместно
+  document-start:
+    present: true
+
+
