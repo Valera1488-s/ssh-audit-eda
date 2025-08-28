@@ -1,4 +1,5 @@
--# Роль ssh_audit: читает эффективные параметры sshd и сверяет с эталоном
+---
+# Роль ssh_audit: читает эффективные параметры sshd и сверяет с эталоном
 - name: Ensure log directory exists
   ansible.builtin.file:
     path: "{{ ssh_audit_log_path | dirname }}"
