@@ -1,3 +1,4 @@
+---
 name: ansible-ssh-audit-ci
 on:
   push:
