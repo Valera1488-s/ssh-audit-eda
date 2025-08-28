@@ -1,5 +1,5 @@
 name: ansible-ssh-audit-ci
-on:
+"on":
   push:
     branches:
       - "**"
@@ -33,7 +33,10 @@ jobs:
       - name: Run container
         run: |
           mkdir -p logs
-          docker run --rm -v ${{ github.workspace }}/example:/example:ro -v ${{ github.workspace }}/logs:/var/log ssh-audit-eda:ci
+          docker run --rm \
+            -v ${{ github.workspace }}/example:/example:ro \
+            -v ${{ github.workspace }}/logs:/var/log \
+            ssh-audit-eda:ci
       - name: Check JSON log with jq
         run: |
           sudo apt-get update && sudo apt-get install -y jq

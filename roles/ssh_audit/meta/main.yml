@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: vvv
   description: "Аудит параметров sshd_config и вывод единострочного JSON"

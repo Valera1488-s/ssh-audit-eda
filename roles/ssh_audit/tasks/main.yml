@@ -28,11 +28,16 @@
         })
       }}
   loop:
-    - { param: 'PermitRootLogin', key: 'permitrootlogin' }
-    - { param: 'PasswordAuthentication', key: 'passwordauthentication' }
-    - { param: 'MaxAuthTries', key: 'maxauthtries' }
-    - { param: 'ChallengeResponseAuthentication', key: 'challengeresponseauthentication' }
-    - { param: 'X11Forwarding', key: 'x11forwarding' }
+    - param: 'PermitRootLogin'
+      key: 'permitrootlogin'
+    - param: 'PasswordAuthentication'
+      key: 'passwordauthentication'
+    - param: 'MaxAuthTries'
+      key: 'maxauthtries'
+    - param: 'ChallengeResponseAuthentication'
+      key: 'challengeresponseauthentication'
+    - param: 'X11Forwarding'
+      key: 'x11forwarding'
 - name: Compute status
   ansible.builtin.set_fact:
     ssh_audit_status: >-
