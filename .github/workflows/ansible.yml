@@ -2,9 +2,11 @@ name: ansible-ssh-audit-ci
 
 on:
   push:
-    branches: [ "**" ]
+    branches:
+      - "**"
   pull_request:
-    branches: [ "**" ]
+    branches:
+      - "**"
 
 jobs:
   lint:

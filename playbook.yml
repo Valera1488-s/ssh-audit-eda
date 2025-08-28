@@ -13,5 +13,5 @@
       X11Forwarding: "no"
     ssh_audit_log_path: "/var/log/ansible-ssh-audit.log"
   roles:
-    - ssh_audit
+    - role: ssh_audit
 

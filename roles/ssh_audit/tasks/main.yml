@@ -10,12 +10,26 @@
 - name: Get effective sshd config via sshd -T
   ansible.builtin.command: >-
     sshd -T -f {{ ssh_audit_sshd_config_path }}
-  register: sshd_t_output
+  register: ssh_audit_sshd_t_output
   changed_when: false
 
 - name: Extract target parameters from sshd -T output
   ansible.builtin.set_fact:
-    ssh_audit_values: "{{ ssh_audit_values | default({}) | combine({ item.param: ((sshd_t_output.stdout_lines | select('match', '^' ~ item.key ~ '\\s+') | list | first | default('')) | regex_replace('^.*\\s+', '')) }) }}"
+    ssh_audit_values: >
+      {{
+        ssh_audit_values | default({}) |
+        combine({
+          item.param: (
+            (
+              ssh_audit_sshd_t_output.stdout_lines
+              | select('match', '^' ~ item.key ~ '\\s+')
+              | list
+              | first
+              | default('')
+            ) | regex_replace('^.*\\s+', '')
+          )
+        })
+      }}
   loop:
     - { param: 'PermitRootLogin', key: 'permitrootlogin' }
     - { param: 'PasswordAuthentication', key: 'passwordauthentication' }
